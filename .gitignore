@@ -2,8 +2,7 @@
 *.env
 *.yml
 
-memo_git.md
-memo.md
+*.md
 log/
 
 HELP.mdx
