@@ -7,6 +7,12 @@
   <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}">
   <script th:src="@{/webjars/jquery/jquery.min.js}" defer></script>
   <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}" defer></script>
+  <!-- jqueryを読み込む -->
+  <script type="text/javascript" th:src="@{/js/jquery-3.6.0.min.js}"></script>
+  <!-- bootstrap-datepickerを読み込む -->
+  <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap-datepicker.min.css}">
+  <script type="text/javascript" th:src="@{/js/bootstrap-datepicker.min.js}"></script>
+  <script type="text/javascript" th:src="@{/js/bootstrap-datepicker.ja.min.js}"></script>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light" style="background-color:#CCFFFF;">
@@ -28,56 +34,75 @@
   </div>
 </nav>
 <div class="container-fluid">
-  <div th:if="${error}">
-    <h2 th:if="${error}" style="color: red;">[[${error}]]</h2>
-    <p>管理者にご連絡ください</p>
-    <form method="POST" th:action="@{/diary/form}">
-      <button type="submit" name="back" class="btn btn-light">一覧へ</button>
-    </form>
-  </div>
-  <div  th:if="${diary}"  class="create m-2">
-    <form method="POST" th:action="@{/diary/edit}" th:object="${diary}">
-      <p class="p-1 h4">詳細</p>
+  <h2 th:if="${error}" style="color: red;">[[${error}]]</h2>
+  <div class="create m-2">
+    <form id="form" class="needs-validation" novalidate method="POST" th:action="@{/diary/insert}" onsubmit="return check()">
+      <p class="p-1 h4" th:text="新規作成"></p>
       <div class="row justify-content-center">
         <div class="form-group col-8">
           <label for="dateForm">日付</label>
-          <p><span th:text="${diary.date}"></span></p>
+          <input type="text" class="form-control" name="dateForm" id="date_sample" required>
+          <div class="invalid-feedback">必須入力です</div>
         </div>
       </div>
       <div class="row justify-content-center">
         <div class="form-group col-8">
           <label for="categoryForm">分類</label>
-          <p><span th:text="${diary.name}"></span></p>
+          <select id="categoryForm" class="form-select col-8" name="categoryForm" required>
+            <option selected></option>
+            <option value="1">仕事</option>
+            <option value="2">趣味</option>
+            <option value="3">その他</option>
+          </select>
+          <div class="invalid-feedback">必須入力です</div>
         </div>
       </div>
       <div class="row justify-content-center">
         <div class="form-group col-8">
           <label for="title">題名</label>
-          <p><span th:text="${diary.title}"></span></p>
+          <input type="text" class="form-control" name="titleForm" id="title" required>
+          <div class="invalid-feedback">25文字以内で入力してください</div>
         </div>
       </div>
       <div class="row justify-content-center">
         <div class="form-group col-8">
           <label for="floatingTextarea">内容</label>
-          <p><span th:text="${diary.content}" style="white-space: pre-wrap;"></span></p>
+          <textarea class="form-control" placeholder="日記の内容" name="contentForm" style="height: 200px"></textarea>
         </div>
       </div>
       <div class="row justify-content-end">
         <div class="col-1">
-          <button type="submit" name="update" class="btn btn-primary">編集</button>
+          <button type="submit" class="btn btn-primary" name="insert" onClick="btn='insert'">登録</button>
         </div>
         <div class="col-1">
-          <button type="submit" name="back" class="btn btn-light">一覧へ</button>
+          <button type="submit" class="btn btn-light" name="back" onClick="btn='back'">一覧へ</button>
         </div>
       </div>
-      <input type="hidden" name="updateFlag" th:value=true>
-      <input type="hidden" name="id" th:value="${diary.id}">
-      <input type="hidden" name="categoryForm" th:value="${diary.category}">
-      <input type="hidden" name="titleForm" th:value="${diary.title}">
-      <input type="hidden" name="dateForm" th:value="${diary.date}">
-      <input type="hidden" name="contentForm" th:value="${diary.content}">
     </form>
   </div>
 </div>
 </body>
+
+<script>
+    $('#date_sample').datepicker({
+      format: 'yyyy/mm/dd',
+      language: 'ja',
+      autoclose: true,
+    });
+
+    const check = (event) => {
+      //　一覧ボタン押下した場合はチェックしない
+      if (btn === 'back'){
+        return true;
+      }
+
+      const form = document.getElementById('form');
+      if (!form.checkValidity()){
+        form.classList.add('was-validated');
+        return false;
+      } else {
+        return true;
+      }
+    };
+  </script>
 </html>

@@ -50,13 +50,13 @@ public class DiaryController {
    * 新規登録へ遷移
    *
    * @param model
-   * @return resources/templates/form.html
+   * @return resources/templates/new.html
    */
-  @GetMapping("/form")
+  @GetMapping("/new")
   public String formPage(
       Model model
   ) {
-    return "init/form";
+    return "init/new";
   }
 
 
@@ -76,7 +76,7 @@ public class DiaryController {
   ) {
     if (result.hasErrors()) {
       model.addAttribute("error", "パラメータエラーが発生しました。");
-      return "init/form";
+      return "init/new";
     }
     int count = diaryservice.insert(form);
     model.addAttribute("postForm", form);
@@ -122,7 +122,7 @@ public class DiaryController {
   ) {
     if (result.hasErrors()) {
       model.addAttribute("error", "パラメータエラーが発生しました。");
-      return "init/form";
+      return "init/edit";
     }
     int count = diaryservice.update(form);
     return "redirect:/diary";
@@ -132,10 +132,10 @@ public class DiaryController {
    * 新規登録へ遷移
    *
    * @param model
-   * @return resources/templates/form.html
+   * @return resources/templates/edit.html
    */
-  @PostMapping("/form")
-  public String formPage(
+  @PostMapping("/new")
+  public String formPageNew(
       @ModelAttribute PutForm form,
       Model model
   ) {
@@ -146,7 +146,27 @@ public class DiaryController {
     } else {
       model.addAttribute("update", false);
     }
-    return "init/form";
+    return "init/new";
+  }
+    /**
+   * 新規登録へ遷移
+   *
+   * @param model
+   * @return resources/templates/edit.html
+   */
+  @PostMapping("/edit")
+  public String formPageEdit(
+      @ModelAttribute PutForm form,
+      Model model
+  ) {
+    model.addAttribute("putForm", form);
+    //新規登録か編集で分岐
+    if (form.isUpdateFlag()) {
+      model.addAttribute("update", true);
+    } else {
+      model.addAttribute("update", false);
+    }
+    return "init/edit";
   }
   /**
    * 「一覧へ」選択時、一覧画面へ遷移
